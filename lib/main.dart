@@ -5,6 +5,9 @@ import 'package:mobile_printer_app/ui/home_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mobile_printer_app/ui/invoice/bloc/invoice_bloc.dart';
 import 'package:mobile_printer_app/ui/invoice/invoice_page.dart';
+import 'package:mobile_printer_app/ui/printers/bloc/ip_printer_bloc.dart';
+import 'package:mobile_printer_app/ui/printers/bloc/ip_printer_state.dart';
+import 'package:mobile_printer_app/ui/printers/ip_device_list.dart';
 
 
 void main() {
@@ -22,6 +25,12 @@ void main() {
             return BluetoothBloc(); // Initialize your bloc with the Dio API client
           },
           child: BluetoothDeviceList(dataToPrint: ""),
+        ),
+        BlocProvider<IPPrinterBloc>(
+          create: (context) {
+            return IPPrinterBloc(); // Initialize your bloc with the Dio API client
+          },
+          child: IPDeviceList(dataToPrint: ""),
         ),
       ],
       child: const MyApp(),

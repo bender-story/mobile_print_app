@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../utils/ui_utils.dart';
+
 class CustomPrintPage extends StatelessWidget {
+  TextEditingController controller = TextEditingController(text: "");
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -10,8 +13,9 @@ class CustomPrintPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           TextField(
-            keyboardType: TextInputType.number,
-            decoration: InputDecoration(
+            keyboardType: TextInputType.text,
+            controller: controller,
+            decoration: const InputDecoration(
               hintText: 'Print Custom Text',
               isDense: true,
               border: OutlineInputBorder(),
@@ -21,14 +25,21 @@ class CustomPrintPage extends StatelessWidget {
           SizedBox(height: 20),
           ElevatedButton(
             onPressed: () {
-              // Trigger the print functionality
-              print('Printing...');
+              if(controller.text.isEmpty){
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Please enter some text to print'),
+                  ),
+                );
+              } else {
+                UiUtils.showPrintOptions(context, controller.text);
+              }
             },
             child: Text('Print'),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.deepOrangeAccent,
               foregroundColor: Colors.white,
-              minimumSize: Size(double.infinity, 50), // Set minimum width and height
+              minimumSize: Size(double.infinity, 50),
             ),
           ),
         ],

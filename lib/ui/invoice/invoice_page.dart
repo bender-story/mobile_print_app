@@ -5,6 +5,8 @@ import 'package:mobile_printer_app/data/item_type.dart';
 import 'package:mobile_printer_app/ui/bluetooth/bluetooth_devices_list.dart';
 import 'package:mobile_printer_app/ui/custom_ui/custom_row.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_printer_app/ui/printers/ip_device_list.dart';
+import 'package:mobile_printer_app/utils/ui_utils.dart';
 
 import '../../data/invoice_data.dart';
 import '../../utils/app_utils.dart';
@@ -80,11 +82,16 @@ class _InvoicePageState extends State<InvoicePage> {
                       const SizedBox(height: 10),
                       ElevatedButton(
                         onPressed: () async {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => BluetoothDeviceList(dataToPrint: invoiceData.toPrintableString()),
-                            ),
-                          );
+                          if(invoiceData.total == 0){
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Total cannot be zero!'),
+                              ),
+                            );
+                          } else {
+                            UiUtils.showPrintOptions(
+                                context, invoiceData.toPrintableString());
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrangeAccent,

@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:mobile_printer_app/ui/custom_print_page.dart';
 import 'package:mobile_printer_app/ui/invoice/invoice_page.dart';
-import 'package:mobile_printer_app/ui/print_list.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -15,7 +14,6 @@ class _HomePageState extends State<HomePage> {
   static List<Widget> _widgetOptions = <Widget>[
     InvoicePage(),
     CustomPrintPage(),
-    PrintList()
   ];
 
   void _onItemTapped(int index) {
@@ -43,11 +41,7 @@ class _HomePageState extends State<HomePage> {
           BottomNavigationBarItem(
             icon: Icon(Icons.print),
             label: 'Custom Print',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.history),
-            label: 'Previous Prints',
-          ),
+          )
         ],
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.amber[800],
