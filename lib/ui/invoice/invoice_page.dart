@@ -1,11 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:mobile_printer_app/bluetooth_print.dart';
 import 'package:mobile_printer_app/data/item_type.dart';
+import 'package:mobile_printer_app/ui/bluetooth/bluetooth_devices_list.dart';
 import 'package:mobile_printer_app/ui/custom_ui/custom_row.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/invoice_data.dart';
 import '../../utils/app_utils.dart';
+import '../custom_ui/loading_indicator.dart';
 import '../custom_ui/product_row.dart';
 import 'bloc/invoice_bloc.dart';
 import 'bloc/invoice_event.dart';
@@ -76,8 +79,12 @@ class _InvoicePageState extends State<InvoicePage> {
                           textTwo: '\$${invoiceData.total.toStringAsFixed(2)}'),
                       const SizedBox(height: 10),
                       ElevatedButton(
-                        onPressed: () {
-                          print('Printing...');
+                        onPressed: () async {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => BluetoothDeviceList(dataToPrint: invoiceData.toPrintableString()),
+                            ),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.deepOrangeAccent,

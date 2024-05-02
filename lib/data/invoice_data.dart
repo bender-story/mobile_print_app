@@ -19,4 +19,16 @@ class InvoiceData {
           ItemType.Trousers: Item(),
           ItemType.Shoes: Item(),
         };
+
+  String toPrintableString() {
+    var result = StringBuffer();
+    items.forEach((type, item) {
+      result.writeln('${type.name}: ${item.quantity} x ${type.unitPrice} = ${item.totalPrice}');
+    });
+    result.writeln('Subtotal: $subtotal');
+    result.writeln('GST: $gst');
+    result.writeln('--------------------------------');
+    result.writeln('Total: $total');
+    return result.toString();
+  }
 }
