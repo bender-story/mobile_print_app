@@ -86,28 +86,11 @@ class NativePrinterPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
             "discoverWifiPrinters" -> {
                 val networkBase = call.argument<String>("networkBase") ?: "192.168.50"
-                val wifiPrinter = WifiPrinterImpl()
-                wifiPrinter.discoverPrinters(networkBase, result)
-            }
-
-            "printToWifiPrinter" -> {
-                val ipAddress = call.argument<String>("ipAddress")
-                val data = call.argument<String>("data")
-                val wifiPrinter = WifiPrinterImpl()
-                if (ipAddress != null && data != null) {
-                    wifiPrinter.print(ipAddress, data, result)
-                } else {
-                    result.error("INVALID_ARGUMENTS", "Invalid or missing arguments", null)
-                }
-            }
-
-            "discoverWifiIppPrinters" -> {
-                val networkBase = call.argument<String>("networkBase") ?: "192.168.50"
                 val wifiPrinter = WifiIppPrinterImpl()
                 wifiPrinter.discoverPrinters(networkBase, result)
             }
 
-            "printToWifiIppPrinter" -> {
+            "printToWifiPrinter" -> {
                 val ipAddress = call.argument<String>("ipAddress")
                 val data = call.argument<String>("data")
                 val wifiPrinter = WifiIppPrinterImpl()
