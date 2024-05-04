@@ -1,6 +1,6 @@
 import 'package:flutter/services.dart';
 
-class IPPrinterManager {
+class WifiPrinter {
   static const MethodChannel _channel = MethodChannel('native_printer');
 
   static Future<List<String>> discoverIPPrinters() async {
