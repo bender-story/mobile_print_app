@@ -1,5 +1,6 @@
 import Foundation
 import Network
+import Flutter
 
 class WiFiPrinterManager {
     private var result: FlutterResult?

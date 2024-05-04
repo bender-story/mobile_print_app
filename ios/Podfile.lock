@@ -1,0 +1,22 @@
+PODS:
+  - Flutter (1.0.0)
+  - native_printer (0.0.1):
+    - Flutter
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - native_printer (from `.symlinks/plugins/native_printer/ios`)
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  native_printer:
+    :path: ".symlinks/plugins/native_printer/ios"
+
+SPEC CHECKSUMS:
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  native_printer: f0bdf98e01d51a36d1d7f123f4725e536c96ba29
+
+PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
+
+COCOAPODS: 1.15.2
