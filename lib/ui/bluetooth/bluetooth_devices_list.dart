@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mobile_printer_app/utils/ui_utils.dart';
 
 import 'bloc/bluetooth_bloc.dart';
 import 'bloc/bluetooth_event.dart';
@@ -16,6 +17,9 @@ class BluetoothDeviceList extends StatefulWidget {
 }
 
 class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
+  List<Map<String?, String?>> devices = [];
+  String loaderText = "Searching for nearby devices...";
+
   @override
   void initState() {
     super.initState();
@@ -31,64 +35,58 @@ class _BluetoothDeviceListState extends State<BluetoothDeviceList> {
       body: BlocConsumer<BluetoothBloc, BluetoothState>(
         listener: (context, state) {
           if (state is BluetoothPrinted) {
-            _showSuccessDialog(state.result);
+            UiUtils.showSuccessDialog(context, state.result);
+          } else if (state is BluetoothError) {
+            UiUtils.showErrorDialog(context, state.message);
+          } else if (state is BluetoothLoaded) {
+            setState(() {
+              devices = state.devices;
+            });
           }
         },
         builder: (context, state) {
           if (state is BluetoothLoading) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (state is BluetoothLoaded) {
-            return ListView.builder(
-              itemCount: state.devices.length,
-              itemBuilder: (context, index) {
-                var device = state.devices[index];
-                return ListTile(
-                  title: Text(device['name'] ?? 'Unknown Device'),
-                  subtitle: Text(device['address'] ?? 'No Address'),
-                  leading: const Icon(Icons.bluetooth),
-                  onTap: () {
-                    if (device['address']?.isNotEmpty ?? false) {
-                      context.read<BluetoothBloc>().add(ConnectAndPrint(
-                          deviceAddress: device['address'] ?? '',
-                          dataToPrint: widget.dataToPrint));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Device address is empty'),
-                        ),
-                      );
-                    }
-                  },
-                );
-              },
-            );
-          } else if (state is BluetoothError) {
-            return Center(child: Padding(
-              padding: const EdgeInsets.all(48.0),
-              child: Text(state.message),
+            return Center(child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const CircularProgressIndicator(),
+                const SizedBox(height: 20,),
+                Text(loaderText)
+              ],
             ));
+          } else {
+            return _buildListView();
           }
-          return const Center(child: Text('Start searching for devices...'));
         },
       ),
     );
   }
 
-  void _showSuccessDialog(String result) {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Print Success'),
-          content: Text(result),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('OK'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
+  Widget _buildListView() {
+    return ListView.builder(
+      itemCount: devices.length,
+      itemBuilder: (context, index) {
+        var device = devices[index];
+        return ListTile(
+          title: Text(device['name'] ?? 'Unknown Device'),
+          subtitle: Text(device['address'] ?? 'No Address'),
+          leading: const Icon(Icons.bluetooth),
+          onTap: () {
+            if (device['address']?.isNotEmpty ?? false) {
+              setState(() {
+                loaderText = "Printing data...";
+              });
+              context.read<BluetoothBloc>().add(ConnectAndPrint(
+                  deviceAddress: device['address'] ?? '',
+                  dataToPrint: widget.dataToPrint));
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Device address is empty'),
+                ),
+              );
+            }
+          },
         );
       },
     );
