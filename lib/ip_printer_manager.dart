@@ -1,10 +1,10 @@
 import 'package:flutter/services.dart';
 
 class IPPrinterManager {
-  static const MethodChannel _channel = MethodChannel('native_bluetooth_print');
+  static const MethodChannel _channel = MethodChannel('native_printer');
 
   static Future<List<String>> discoverIPPrinters() async {
-    final List<dynamic> devices = await _channel.invokeMethod('discoverIPPrinters');
+    final List<dynamic> devices = await _channel.invokeMethod('discoverWifiPrinters');
     return devices.cast<String>();
   }
 
