@@ -21,6 +21,7 @@ class IPPrinterBloc extends Bloc<IPPrinterEvent, IPPrinterState> {
   }
 
   Future<void> _onConnectAndPrint(ConnectAndPrint event, Emitter<IPPrinterState> emit) async {
+    emit(IPPrinterLoading());
     String result =await IPPrinterManager.printToIPPrinter(event.deviceAddress, event.dataToPrint);
     if(result == "Success") {
       emit(IPPrinterPrinted("Print successful to ${event.deviceAddress}"));

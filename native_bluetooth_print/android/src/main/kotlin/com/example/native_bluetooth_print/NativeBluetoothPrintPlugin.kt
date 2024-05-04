@@ -33,6 +33,21 @@ import java.net.InetSocketAddress
 import java.net.Socket
 import java.io.OutputStream
 
+import de.gmuth.ipp.attributes.ColorMode
+import de.gmuth.ipp.attributes.DocumentFormat
+import de.gmuth.ipp.attributes.Media
+import de.gmuth.ipp.attributes.PrintQuality
+import de.gmuth.ipp.attributes.Sides
+import de.gmuth.ipp.attributes.TemplateAttributes.copies
+import de.gmuth.ipp.attributes.TemplateAttributes.jobName
+import de.gmuth.ipp.attributes.TemplateAttributes.printerResolution
+import de.gmuth.ipp.client.IppPrinter
+import de.gmuth.ipp.core.IppResolution
+import java.io.File
+import java.net.URI
+import java.nio.file.Files
+import java.nio.file.attribute.FileAttribute
+
 class NativeBluetoothPrintPlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     private lateinit var channel: MethodChannel
     private var bluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
@@ -95,29 +110,25 @@ class NativeBluetoothPrintPlugin : FlutterPlugin, MethodCallHandler, ActivityAwa
             }
 
             "discoverIPPrinters" -> {
-                val networkBase = call.argument<String>("networkBase") ?: "192.168.1"
-                discoverIPPrinters(networkBase, { printers ->
-                    if (printers.isNotEmpty()) {
-                        result.success(printers)
-                    } else {
-                        result.error("NO_PRINTERS_FOUND", "No printers found on the network", null)
-                    }
-                }) { errorMessage ->
-                    result.error("DISCOVERY_ERROR", errorMessage, null)
-                }
+                val networkBase = call.argument<String>("networkBase") ?: "192.168.50"
+                discoverIPPrinters(networkBase, result)
             }
 
-            "printToNetworkPrinter" -> {
+            "printToWifiPrinter" -> {
                 val ipAddress = call.argument<String>("ipAddress")
                 val data = call.argument<String>("data")
                 if (ipAddress != null && data != null) {
-                    printToNetworkPrinter(ipAddress, data) { success, message ->
-                        if (success) {
-                            result.success(message)
-                        } else {
-                            result.error("PRINT_ERROR", message, null)
-                        }
-                    }
+                    printToNetworkPrinter(ipAddress, data, result)
+                } else {
+                    result.error("INVALID_ARGUMENTS", "Invalid or missing arguments", null)
+                }
+            }
+
+            "printToWifiPrinterIpp" -> {
+                val ipAddress = call.argument<String>("ipAddress")
+                val data = call.argument<String>("data")
+                if (ipAddress != null && data != null) {
+                    printToNetworkPrinterIpp(ipAddress, data, result)
                 } else {
                     result.error("INVALID_ARGUMENTS", "Invalid or missing arguments", null)
                 }
@@ -248,8 +259,7 @@ class NativeBluetoothPrintPlugin : FlutterPlugin, MethodCallHandler, ActivityAwa
 
     fun discoverIPPrinters(
         networkBase: String,
-        result: (List<String>) -> Unit,
-        error: (String) -> Unit
+        result: Result
     ) {
         networkScope.launch {
             val foundPrinters = mutableListOf<String>()
@@ -262,49 +272,88 @@ class NativeBluetoothPrintPlugin : FlutterPlugin, MethodCallHandler, ActivityAwa
                             1000
                         )
                         foundPrinters.add(ipAddress)
+                        Log.d("ip printer", " $ipAddress")
                     }
                 } catch (e: Exception) {
-                    error("Failed to connect to $ipAddress: ${e.message}")
+                    Log.e("BluetoothPlugin", "Failed to connect to $ipAddress: ${e.message}")
                 }
             }
             withContext(Dispatchers.Main) {
-                result(foundPrinters)
+                if (foundPrinters.isNotEmpty()) {
+                    result.success(foundPrinters)
+                } else {
+                    result.error("NO_PRINTERS_FOUND", "No printers found on the network", null)
+                }
             }
         }
     }
 
-    fun printToNetworkPrinter(
-        ipAddress: String,
-        data: String,
-        callback: (Boolean, String) -> Unit
-    ) {
-        CoroutineScope(Dispatchers.IO).launch {
+    private fun printToNetworkPrinter(ipAddress: String, data: String, result: Result) {
+        networkScope.launch {
             try {
                 Socket().use { socket ->
-                    // Connect to the printer IP on port 9100
-                    socket.connect(
-                        InetSocketAddress(ipAddress, 9100),
-                        2000
-                    ) // Timeout for 2 seconds
-                    val out: OutputStream = socket.getOutputStream()
-
-                    // Prepare data to send (encode your data as needed)
-                    val bytes = data.toByteArray(Charsets.US_ASCII)
-
-                    // Send data
-                    out.write(bytes)
+                    socket.connect(InetSocketAddress(ipAddress, 9100), 10000)  // 10-second timeout
+                    Log.d("PrinterConnection", "Connected to $ipAddress")
+                    val out = socket.getOutputStream()
+                    out.write(data.toByteArray(Charsets.US_ASCII))
                     out.flush()
+                    Log.d("PrinterData", "Data sent to printer")
 
-                    // Optionally handle response or assume success
+                    // Read response from the printer
+                    val input = socket.getInputStream()
+                    val response = ByteArray(1024)
+                    val bytesRead = input.read(response)
+                    val responseString = String(response, 0, bytesRead)
+                    Log.d("PrinterResponse", "Received from printer: $responseString")
+
                     withContext(Dispatchers.Main) {
-                        callback(true, "Success")
+                        if (bytesRead > 0) {
+                            result.success("Print successful: $responseString")
+                        } else {
+                            result.success("Data sent, but no response from printer")
+                        }
                     }
                 }
-            } catch (e: Exception) {
-                // Handle exceptions, such as connection failures
+            } catch (e: IOException) {
+                Log.e("PrinterError", "Failed to print: ${e.message}")
                 withContext(Dispatchers.Main) {
-                    callback(false, "Failed to print: ${e.message}")
+                    result.error("PRINT_FAILED", "Failed to print: ${e.message}", null)
                 }
+            }
+        }
+    }
+
+    private fun printToNetworkPrinterIpp(ipAddress: String, data: String, result: Result) {
+        networkScope.launch {
+            val tempFile = Files.createTempFile("printData", ".txt").toFile().apply {
+                writeText(data, Charsets.UTF_8)
+            }
+
+            try {
+                val printerUrl = URI("ipp://$ipAddress:631/ipp/print")
+                val ippPrinter = IppPrinter(printerUrl)
+                val printJob = ippPrinter.printJob(
+                    tempFile,
+                    DocumentFormat("application/octet-stream"), // Use 'application/octet-stream' for binary data
+                    copies(1),
+                    jobName("FlutterPrintJob"),
+                    printerResolution(600, IppResolution.Unit.DPI),
+                    Sides.OneSided,
+                    ColorMode.Color,
+                    PrintQuality.High,
+                    Media.ISO_A4
+                )
+
+                printJob.waitForTermination()
+                withContext(Dispatchers.Main) {
+                    result.success("Print job completed successfully")
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    result.error("PRINT_FAILED", "Failed to print: ${e.message}", null)
+                }
+            } finally {
+                Files.deleteIfExists(tempFile.toPath())
             }
         }
     }

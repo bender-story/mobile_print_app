@@ -37,7 +37,7 @@ class ProductRow extends StatelessWidget {
             Expanded(
               child: TextField(
                 keyboardType: TextInputType.number,
-                controller: TextEditingController(text: quantity.toString()),
+                // controller: TextEditingController(text: quantity.toString()),
                 decoration: InputDecoration(
                   hintText: 'Qty',
                   isDense: true,

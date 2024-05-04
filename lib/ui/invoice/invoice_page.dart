@@ -90,7 +90,7 @@ class _InvoicePageState extends State<InvoicePage> {
                             );
                           } else {
                             UiUtils.showPrintOptions(
-                                context, invoiceData.toPrintableString());
+                                context, invoiceData.toPrintableString(invoiceData.total.toString()));
                           }
                         },
                         style: ElevatedButton.styleFrom(
