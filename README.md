@@ -30,7 +30,7 @@ A Flutter App for printing a receipt or custom text using Bluetooth or IP printe
 12. test: Contains unit tests for utility functions.
 
 
-# Native plugin - native_printer
+# Native plugin - native_printer_bw
 
 This plugin is used to connect the app with the native code to connect to the printer.
 
@@ -56,15 +56,27 @@ This plugin contains multiple call methods -
 2. BluetoothManager - Class to handle the bluetooth printer connection and print the data.
 3. WiFiPrinterManager - Class to handle the wifi/IPP printer connection and print the data.
 
-## Screen shots 
+# Screen shots 
+
+## UI
 <img src="https://github.com/bender-story/mobile_print_app/assets/10196013/184247d8-98cb-4e44-9b8f-612ec3f1ea0a" width="300" style="margin: 50px;">
 
 <img src="https://github.com/bender-story/mobile_print_app/assets/10196013/f794939d-f23c-490e-adcd-a5d15ab91732" width="300" style="margin: 50px;">
 
 <img src="https://github.com/bender-story/mobile_print_app/assets/10196013/2a5e3151-d6f5-4cda-b9e3-a2e7b1deae07" width="300" style="margin: 50px;">
 
+## Bluetooth Printing
+
 <img src="https://github.com/bender-story/mobile_print_app/assets/10196013/1329f702-5c24-4897-bb6e-59fbc3e09339" width="300" style="margin: 50px;">
 
 <img src="https://github.com/bender-story/mobile_print_app/assets/10196013/db85b2b4-9eb1-404c-821b-21cfe3078c25" width="300" style="margin: 50px;">
 
+## Wifi/IPP printing
+
 <img src="https://github.com/bender-story/mobile_print_app/assets/10196013/4fc67a66-a3f3-42f3-8a04-e0f4f915ed20" width="300" style="margin: 50px;">
+
+<img src="https://github.com/bender-story/mobile_print_app/assets/10196013/96c6148b-e513-4df6-a0b5-e3f9289b4271" width="300" style="margin: 50px;">
+
+**I have successfully tested it with the Canon Printer; it can communicate with the printer and confirms that the connection is established. However, it appears that a specific driver might be necessary for actual printing, as the text did not print despite the positive response.**
+
+<img src="https://github.com/bender-story/mobile_print_app/assets/10196013/7788f987-fcb9-49ee-9b2a-7a65ac5ad7db" width="300" style="margin: 50px;">
