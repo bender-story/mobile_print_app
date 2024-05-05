@@ -50,8 +50,21 @@ This plugin contains multiple call methods -
 1. Coroutines - For handling the async calls.
 2. e.gmuth:ipp-client - For handling the IPP printer connection and print the data.
 
+
 ## iOS code -
 1. NativePrinterPlugin - Plugin launch class where the method channel are handled.
 2. BluetoothManager - Class to handle the bluetooth printer connection and print the data.
 3. WiFiPrinterManager - Class to handle the wifi/IPP printer connection and print the data.
 
+## Screen shots 
+<img src="https://github.com/bender-story/mobile_print_app/assets/10196013/184247d8-98cb-4e44-9b8f-612ec3f1ea0a" width="300" style="margin: 50px;">
+
+<img src="https://github.com/bender-story/mobile_print_app/assets/10196013/f794939d-f23c-490e-adcd-a5d15ab91732" width="300" style="margin: 50px;">
+
+<img src="https://github.com/bender-story/mobile_print_app/assets/10196013/2a5e3151-d6f5-4cda-b9e3-a2e7b1deae07" width="300" style="margin: 50px;">
+
+<img src="https://github.com/bender-story/mobile_print_app/assets/10196013/1329f702-5c24-4897-bb6e-59fbc3e09339" width="300" style="margin: 50px;">
+
+<img src="https://github.com/bender-story/mobile_print_app/assets/10196013/db85b2b4-9eb1-404c-821b-21cfe3078c25" width="300" style="margin: 50px;">
+
+<img src="https://github.com/bender-story/mobile_print_app/assets/10196013/4fc67a66-a3f3-42f3-8a04-e0f4f915ed20" width="300" style="margin: 50px;">
