@@ -36,10 +36,10 @@ This plugin is used to connect the app with the native code to connect to the pr
 
 ## Plugin Features:
 This plugin contains multiple call methods -
-1. discoverBluetoothPrinter - To discover the available bluetooth printers.
-2. printToBluetoothPrinter - To connect and print the data to the bluetooth printer.
-3. discoverWifiPrinters - To discover the available wifi/IPP printers.
-4. printToWifiPrinter - To connect and print the data to the wifi/IPP printer.
+1. **discoverBluetoothPrinter** - To discover the available bluetooth printers.
+2. **printToBluetoothPrinter** - To connect and print the data to the bluetooth printer.
+3. **discoverWifiPrinters** - To discover the available wifi/IPP printers.
+4. **printToWifiPrinter** - To connect and print the data to the wifi/IPP printer.
 
 ## Android code -
 1. NativePrinterPlugin - Plugin launch class where the method channel are handled.
