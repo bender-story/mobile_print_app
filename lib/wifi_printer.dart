@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
 class WifiPrinter {
-  static const MethodChannel _channel = MethodChannel('native_printer');
+  static const MethodChannel _channel = MethodChannel('native_printer_bw');
 
   static Future<List<String>> discoverIPPrinters() async {
     final List<dynamic> devices = await _channel.invokeMethod('discoverWifiPrinters');

@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 
 class BluetoothPrinter {
-  static const _channel = MethodChannel('native_printer');
+  static const _channel = MethodChannel('native_printer_bw');
 
   static Future<List<Map<String, String>>> discoverDevices() async {
     final List devices = await _channel.invokeMethod('discoverBluetoothPrinter');
