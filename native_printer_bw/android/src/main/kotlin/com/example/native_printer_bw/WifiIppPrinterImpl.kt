@@ -75,7 +75,7 @@ class WifiIppPrinterImpl : IWifiPrinter {
 
                 printJob.waitForTermination()
                 withContext(Dispatchers.Main) {
-                    result.success("Print job completed successfully")
+                    result.success("Success")
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
